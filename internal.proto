@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package grpc;
+option go_package="./internals/services/grpc";
+
+message SendUserSegmentRequest{
+    string username = 1;
+    string segment = 2;
+}
+
+message SendUserSegmentResponse{
+    string result = 1;
+}
+
+service EsService{
+    rpc SendUserSegment(SendUserSegmentRequest) returns(SendUserSegmentResponse) {};
+}
