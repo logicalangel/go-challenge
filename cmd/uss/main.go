@@ -1,13 +1,16 @@
 package main
 
 import (
-	"arman-task/internals/controller"
+	"arman-task/internal/controller"
+	"arman-task/internal/services/grpc"
 	"fmt"
 )
 
 func main() {
+	es := grpc.NewClient()
+
 	fmt.Println("---- Add new user ----")
 	for {
-		controller.GetUserAndSegmention()
+		controller.AddUserAndSegmention(es)
 	}
 }
