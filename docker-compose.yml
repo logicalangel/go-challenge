@@ -6,13 +6,17 @@ services:
       dockerfile: Dockerfile
       args:
         BUILD_PATH: ./cmd/uss
+    network_mode: "host"
     restart: always
     depends_on:
       - "es"
   es:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile    
       args:
         BUILD_PATH: ./cmd/es
+    network_mode: "host"
+    ports:
+      - "5000:5000"
     restart: always
