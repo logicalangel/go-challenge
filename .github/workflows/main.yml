@@ -1,0 +1,25 @@
+name: Arman-test CI/CD
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Build Arman-test Image
+        run: docker build -t arman-test:latest .
+
+      - name: Push Arman-test Image
+        run: docker push arman-test:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Deploy
+        run: docker pull arman-test:latest && cd /srv/arman && docker-compose up -d
