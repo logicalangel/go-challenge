@@ -44,7 +44,7 @@ type UserHeapRepository interface {
 }
 
 type UserHeap struct {
-	heap UserTtlHeap
+	heap *UserTtlHeap
 }
 
 func (uh UserHeap) Len() int {
@@ -52,15 +52,18 @@ func (uh UserHeap) Len() int {
 }
 
 func (uh UserHeap) Head() *models.User {
-	if len(uh.heap) > 0 {
-		return uh.heap[0]
+	if uh.Len() > 0 {
+		return (*uh.heap)[0]
 	} else {
 		return nil
 	}
 }
 
 func (uh UserHeap) Push(user *models.User) {
-	heap.Push(&uh.heap, user)
+	if uh.heap == nil {
+		uh.heap = &UserTtlHeap{}
+	}
+	heap.Push(uh.heap, user)
 }
 
 func (uh UserHeap) Pop() *models.User {
@@ -70,8 +73,7 @@ func (uh UserHeap) Pop() *models.User {
 func NewUserTtlHeap() UserHeapRepository {
 	var ttlHeap *UserTtlHeap = &UserTtlHeap{}
 	heap.Init(ttlHeap)
-
 	return UserHeap{
-		heap: *ttlHeap,
+		heap: ttlHeap,
 	}
 }
