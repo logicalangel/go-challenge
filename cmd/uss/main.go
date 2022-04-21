@@ -7,8 +7,10 @@ import (
 )
 
 func main() {
+	// create grpc client
 	es := grpc.NewClient()
 
+	// start user input
 	fmt.Println("---- Add new user ----")
 	for {
 		controller.AddUserAndSegmention(es)
