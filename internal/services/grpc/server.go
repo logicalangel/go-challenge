@@ -1,7 +1,6 @@
 package grpc
 
 import (
-	"arman-task/internal/repository"
 	"arman-task/internal/usecase"
 	"context"
 	"log"
@@ -12,12 +11,11 @@ import (
 
 type EsServer struct {
 	UnimplementedEsServiceServer
-	usersHeap  *repository.UserHeapRepository
-	segmentMap *repository.SegmentMapRepository
+	segmentUsecase usecase.SegmentUseCase
 }
 
 func (es *EsServer) SendUserSegment(ctx context.Context, input *SendUserSegmentRequest) (*SendUserSegmentResponse, error) {
-	err := usecase.SaveUserSegmention(*es.usersHeap, *es.segmentMap, input.Username, input.Segment)
+	err := es.segmentUsecase.SaveUserSegmention(input.Username, input.Segment)
 	if err != nil {
 		log.Fatal(err)
 		return &SendUserSegmentResponse{}, err
@@ -28,7 +26,7 @@ func (es *EsServer) SendUserSegment(ctx context.Context, input *SendUserSegmentR
 	}, nil
 }
 
-func NewServer(usersHeap *repository.UserHeapRepository, segmentMap *repository.SegmentMapRepository) {
+func NewServer(segmentUsecase usecase.SegmentUseCase) {
 	lis, err := net.Listen("tcp", ":5000")
 	if err != nil {
 		panic(err.Error())
@@ -36,8 +34,7 @@ func NewServer(usersHeap *repository.UserHeapRepository, segmentMap *repository.
 
 	s := grpc.NewServer()
 	RegisterEsServiceServer(s, &EsServer{
-		usersHeap:  usersHeap,
-		segmentMap: segmentMap,
+		segmentUsecase: segmentUsecase,
 	})
 	if err := s.Serve(lis); err != nil {
 		panic(err.Error())

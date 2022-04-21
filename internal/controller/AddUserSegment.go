@@ -9,7 +9,7 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func AddUserAndSegmention(es services.EstimateService) {
+func AddUserAndSegmention(segmentUsecase usecase.SegmentUseCase, estimateService services.EstimateService) {
 	promptUsername := promptui.Prompt{
 		Label: "Enter Username",
 	}
@@ -29,7 +29,7 @@ func AddUserAndSegmention(es services.EstimateService) {
 		log.Fatal("failed to input segment: ", err.Error())
 	}
 
-	err = usecase.SendUserSegmention(es, username, segment)
+	err = estimateService.SendUserSegment(username, segment)
 	if err != nil {
 		log.Fatal("failed to sent segment to es: ", err.Error())
 	}

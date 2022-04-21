@@ -3,31 +3,38 @@ package usecase
 import (
 	"arman-task/internal/models"
 	"arman-task/internal/repository"
-	"arman-task/internal/services"
 	"time"
 )
 
-func SendUserSegmention(es services.EstimateService, username, segment string) error {
-	err := es.SendUserSegment(username, segment)
-	if err != nil {
-		return err
-	}
-
-	return nil
+// these functions do everything about users and its segments and use services
+type SegmentUseCase interface {
+	SaveUserSegmention(username, segment string) error
+	Estimate(segment string) uint64
+}
+type Segments struct {
+	usersHeap  repository.UserHeapRepository
+	segmentMap repository.SegmentMapRepository
 }
 
-func SaveUserSegmention(usersHeap repository.UserHeapRepository, segmentMap repository.SegmentMapRepository, username, segment string) error {
-	usersHeap.Push(&models.User{
+func NewSegmentUsecase(usersHeap repository.UserHeapRepository, segmentMap repository.SegmentMapRepository) SegmentUseCase {
+	return Segments{
+		usersHeap:  usersHeap,
+		segmentMap: segmentMap,
+	}
+}
+
+func (s Segments) SaveUserSegmention(username, segment string) error {
+	s.usersHeap.Push(&models.User{
 		UserName:  username,
 		Segment:   segment,
 		CreatedAt: time.Now(),
 	})
 
-	segmentMap.IncreaseSegmentEstimate(segment)
+	s.segmentMap.IncreaseSegmentEstimate(segment)
 
 	return nil
 }
 
-func Estimate(sm repository.SegmentMapRepository, segment string) uint64 {
-	return sm.GetSegmentEstimate(segment)
+func (s Segments) Estimate(segment string) uint64 {
+	return s.segmentMap.GetSegmentEstimate(segment)
 }

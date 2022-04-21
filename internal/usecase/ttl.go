@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+// this function run as a goroutine and check head of heap every minute
+// if head of heap was expired pop and delete users until no expied user found
+
 func RunGarbageCollector(sm repository.SegmentMapRepository, heap repository.UserHeapRepository) {
 	for {
 		heapHead := heap.Head()

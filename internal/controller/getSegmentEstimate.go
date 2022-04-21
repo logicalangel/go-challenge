@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"arman-task/internal/repository"
 	"arman-task/internal/usecase"
 	"fmt"
 	"log"
@@ -9,7 +8,7 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-func GetSegmentEstimate(sm repository.SegmentMapRepository) {
+func GetSegmentEstimate(segmentUsecase usecase.SegmentUseCase) {
 	promptSegment := promptui.Prompt{
 		Label: "Enter Segment",
 	}
@@ -19,7 +18,7 @@ func GetSegmentEstimate(sm repository.SegmentMapRepository) {
 		log.Fatal("failed to input segment: ", err.Error())
 	}
 
-	segmentEstimate := usecase.Estimate(sm, segment)
+	segmentEstimate := segmentUsecase.Estimate(segment)
 
 	fmt.Printf("Segment estimate: %d\n------------------------------\n", segmentEstimate)
 }
