@@ -8,6 +8,8 @@ services:
         BUILD_PATH: ./cmd/uss
     network_mode: "host"
     restart: always
+    stdin_open: true
+    tty: true
     depends_on:
       - "es"
   es:
@@ -17,6 +19,8 @@ services:
       args:
         BUILD_PATH: ./cmd/es
     network_mode: "host"
+    stdin_open: true
+    tty: true
     ports:
       - "5000:5000"
     restart: always
